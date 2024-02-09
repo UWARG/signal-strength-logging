@@ -1,4 +1,4 @@
-# signal-strength-logging
-Logs signal strength.
+# Signal Strength Logging
+Logs LTE signal strength.
 
-This script assumes `minicom` is installed on to communicate wtih the modem.
+Follow the [instructions](https://uwarg-docs.atlassian.net/wiki/x/ZABDk)
