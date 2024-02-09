@@ -1,6 +1,7 @@
 """
 Logs LTE signal strength into a file.
 """
+import datetime
 import pathlib
 import subprocess
 import time
@@ -28,7 +29,7 @@ while True:
     )
 
     # String parsing can be done here if you want to edit the log file output
-    log_file.write(result.stdout)
+    log_file.write(datetime.datetime.now().isoformat() + "  " + result.stdout)
 
     AT_command.close()
     log_file.close()
