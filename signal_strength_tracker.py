@@ -3,35 +3,40 @@ Logs LTE signal strength into a file.
 """
 import datetime
 import pathlib
-import subprocess
 import time
+
+import serial
 
 
 # Parameters
-INITIAL_COMMAND = ["minicom", "-o", "-D", "/dev/ttyUSB2"]
-# For this file, just type AT+CSQ. A newline character at the end should not affect the results
-AT_COMMAND_FILE_PATH = pathlib.Path("AT_command.txt")
-# INITIAL_COMMAND = ["python3"]
-# AT_COMMAND_FILE_PATH = pathlib.Path("input.txt")  # Used for testing, just has print("hello world")
+DEVICE_PATH = "/dev/ttyUSB2"
+BAUDRATE = 115200
+AT_COMMAND = b"AT+CSQ"
 OUTPUT_LOG_FILE_PATH = pathlib.Path(f"signal_log_{int(time.time())}.txt")
 PERIOD = 2
 
+# Wait 20 seconds becasue the RPi has a setting where it doesn't boot until 20 seconds after power
+time.sleep(20)
+
 while True:
-    AT_command = open(AT_COMMAND_FILE_PATH, 'r')
     log_file = open(OUTPUT_LOG_FILE_PATH, 'a')
 
-    result = subprocess.run(
-        INITIAL_COMMAND,
-        shell=True,
-        capture_output=True,
-        encoding='utf_8',
-        stdin=AT_command
+    # Create serial connection
+    ser = serial.Serial(
+        DEVICE_PATH,
+        baudrate=BAUDRATE,
+        timeout=1,
     )
+    
+    # Write AT command to the modem
+    ser.write(AT_COMMAND)
+
+    # Get result back from the modem
+    result = str(ser.readline())
 
     # String parsing can be done here if you want to edit the log file output
-    log_file.write(datetime.datetime.now().isoformat() + "  " + result.stdout)
+    log_file.write(datetime.datetime.now().isoformat(timespec="seconds") + "    " + result)
 
-    AT_command.close()
     log_file.close()
 
     # print("logged...")
