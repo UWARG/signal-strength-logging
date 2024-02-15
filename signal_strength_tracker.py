@@ -9,11 +9,11 @@ import serial
 
 
 # Parameters
-DEVICE_PATH = "/dev/ttyUSB2"
-BAUDRATE = 115200
-AT_COMMAND = b"AT+CSQ"
-OUTPUT_LOG_FILE_PATH = pathlib.Path(f"signal_log_{int(time.time())}.txt")
-PERIOD = 2
+SERIAL_PORT = "/dev/ttyUSB3"  # Change this to match your modem's serial port
+BAUDRATE = 115200  # Change this to match your modem's baud rate
+AT_COMMAND = b"AT+CSQ\r\n"  # Command to run on modem
+OUTPUT_LOG_FILE_PATH = pathlib.Path(f"/media/warg/E3F9-7EE3/signal_log_{int(time.time())}.txt")
+PERIOD = 3
 
 # Wait 20 seconds becasue the RPi has a setting where it doesn't boot until 20 seconds after power
 time.sleep(20)
@@ -23,7 +23,7 @@ while True:
 
     # Create serial connection
     ser = serial.Serial(
-        DEVICE_PATH,
+        SERIAL_PORT,
         baudrate=BAUDRATE,
         timeout=1,
     )
@@ -31,14 +31,16 @@ while True:
     # Write AT command to the modem
     ser.write(AT_COMMAND)
 
-    # Get result back from the modem
-    result = str(ser.readline())
+    # Get result back from the modem (reads 1000 bytes)
+    response = ser.read(1000)
 
     # String parsing can be done here if you want to edit the log file output
-    log_file.write(datetime.datetime.now().isoformat(timespec="seconds") + "    " + result)
+    log_file.write(
+        datetime.datetime.now().isoformat(timespec="seconds") + \
+        "    Response: " + response.decode('utf-8') + "\n"
+    )
 
     log_file.close()
-
-    # print("logged...")
+    ser.close()
 
     time.sleep(PERIOD)
