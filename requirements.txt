@@ -1,3 +1,2 @@
 # Packages listed in alphabetical order
-
 pyserial
