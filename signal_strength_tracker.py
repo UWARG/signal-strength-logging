@@ -18,10 +18,10 @@ OUTPUT_LOG_FILE_PATH = pathlib.Path(
     "E3F9-7EE3",
     f"signal_log_{int(time.time())}.txt"
 )
-TIMEOUT = 1  # Seconds
-BYTES_TO_READ = 1000  # Maximum bytes to read after command is run
+SERIAL_INITIALIZATION_TIMEOUT = 1  # Seconds
+MAX_BYTES_TO_READ = 1000  # Maximum bytes to read after command is run
 
-SETUP_TIME = 20  # Wait 20s since the RPi has a setting where it doesn't boot until 20s after power
+SETUP_TIME = 20  # Wait 20s before beginning (see documentation for more details)
 PERIOD = 3  # Seconds
 
 
@@ -35,14 +35,14 @@ if __name__ == "__main__":
         ser = serial.Serial(
             SERIAL_PORT,
             baudrate=BAUDRATE,
-            timeout=TIMEOUT,
+            timeout=SERIAL_INITIALIZATION_TIMEOUT,
         )
         
         # Write AT command to the modem
         ser.write(AT_COMMAND)
 
         # Get result back from the modem (reads 1000 bytes)
-        response = ser.read(BYTES_TO_READ)
+        response = ser.read(MAX_BYTES_TO_READ)
 
         # String parsing can be done here if you want to edit the log file output
         log_file.write(
