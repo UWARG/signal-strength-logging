@@ -1,5 +1,5 @@
 # Copy the following contents to the end of rc.local:
 
-cd /home/warg/venv
-source bin/activate
-python3 /home/warg/signal_strength_tracker.py &
+cd /home/warg/signal-strength-logging
+source venv/bin/activate
+python -m signal_strength_tracker &
