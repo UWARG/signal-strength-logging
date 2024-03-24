@@ -2,7 +2,6 @@
 Logs LTE signal strength into a file.
 """
 
-import datetime
 import pathlib
 import time
 
@@ -29,29 +28,25 @@ def main() -> int:
     time.sleep(SETUP_TIME)
 
     while True:
+        # Create serial connection
+        ser = serial.Serial(
+            SERIAL_PORT,
+            baudrate=BAUDRATE,
+            timeout=SERIAL_INITIALIZATION_TIMEOUT,
+        )
+
+        # Write AT command to the modem
+        ser.write(AT_COMMAND)
+
+        # Get result back from the modem (reads 1000 bytes)
+        response = ser.read(MAX_BYTES_TO_READ)
+
         with open(OUTPUT_LOG_FILE_PATH, "a", encoding="utf-8") as log_file:
-            # Create serial connection
-            ser = serial.Serial(
-                SERIAL_PORT,
-                baudrate=BAUDRATE,
-                timeout=SERIAL_INITIALIZATION_TIMEOUT,
-            )
-
-            # Write AT command to the modem
-            ser.write(AT_COMMAND)
-
-            # Get result back from the modem (reads 1000 bytes)
-            response = ser.read(MAX_BYTES_TO_READ)
-
             # String parsing can be done here if you want to edit the log file output
-            log_file.write(
-                datetime.datetime.now().isoformat(timespec="seconds")
-                + "    Response: "
-                + response.decode("utf-8")
-                + "\n"
-            )
+            response_text = response.decode("utf-8")
+            log_file.write(f"{time.time()}    Response: {response_text}\n")
 
-            ser.close()
+        ser.close()
 
         time.sleep(PERIOD)
 
