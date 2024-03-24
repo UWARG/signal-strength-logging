@@ -1,2 +1,7 @@
 # Packages listed in alphabetical order
 pyserial
+
+# Linters and formatters are explicitly versioned
+black==24.2.0
+flake8-annotations==3.0.1
+pylint==3.0.3

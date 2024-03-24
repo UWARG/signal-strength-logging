@@ -1,4 +1,4 @@
-# IDE
+# IDEs
 .idea/
 .vscode/
 
@@ -7,4 +7,4 @@ __pycache__/
 venv/
 
 # Logging
-*log*
+logs/
